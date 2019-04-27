@@ -1,6 +1,0 @@
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\bin\Debug\FourAcross.exe.config
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\obj\Debug\FourAcross.csprojResolveAssemblyReference.cache
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\bin\Debug\FourAcross.exe
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\bin\Debug\FourAcross.pdb
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\obj\Debug\FourAcross.exe
-c:\users\nick\documents\visual studio 2015\Projects\FourAcross\obj\Debug\FourAcross.pdb

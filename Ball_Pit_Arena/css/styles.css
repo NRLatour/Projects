@@ -1,0 +1,22 @@
+canvas {
+	border:1px solid #d3d3d3;
+ 	background: radial-gradient(red, yellow, green);
+	border-radius: 4px;	
+    display: block;
+}
+
+canvas#stats{
+	background: #000000;
+	color: white;
+}
+
+body {
+    padding: 0;
+    background-color: #000;
+    color: white;
+    text-align: center;
+}
+
+div{
+	display: inline-block;
+}

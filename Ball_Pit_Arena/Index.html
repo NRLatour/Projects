@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Paintball Deathmatch</title>
+
+	<link rel="stylesheet" href="./css/styles.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<script type="text/javascript" src="./js/Ball.js"></script>
+	<script type="text/javascript" src="./js/Board.js"></script>
+    <script type="text/javascript" src="./js/Characters.js"></script>
+	<script type="text/javascript" src="./js/Death.js"></script>
+	<script type="text/javascript" src="./js/Level.js"></script>
+    <script type="text/javascript" src="./js/Move.js"></script>
+    <script type="text/javascript" src="./js/Results.js"></script>
+    <script type="text/javascript" src="./js/Shooting.js"></script>
+    <script type="text/javascript" src="./js/StartMenu.js"></script>
+    <script type="text/javascript" src="./js/StatsBoard.js"></script>
+	<script type="text/javascript" src="./js/Win.js"></script>
+
+    <script>/*
+    Problems:
+        loading the death image and any other sprites online
+        Solved with timer resets, HOLD MOVE WHILE RESTARTING GAME: breaks the game... maybe the event needs to be reset. 
+    
+    To do:
+        
+
+    */</script>
+
+	<script type="text/javascript">
+        var won;                                    //this will be false until the player has won
+        var backgroundMusic;                        //this will hold the music that will played in the background of the game
+        
+        var gameArea = {            //Main Game Canvas
+            canvas: document.createElement("canvas"),
+            Start: function () {
+                this.canvas.width = gameCanvasSize;
+                this.canvas.height = gameCanvasSize;
+                this.context = this.canvas.getContext("2d");
+                this.top = 0;
+                this.left = 0;
+                this.right = this.canvas.width;
+                this.bottom = this.canvas.height;
+                this.canvas.style.background = gameAreaBackGround;
+            },
+            DrawImage : function(image, image_x, image_y, image_w, image_h) {
+                image.onload = function() {
+                    this.context.drawImage(image, image_x, image_y, image_w, image_h);
+                };
+            },
+            Clear: function() {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+            Delete: function(){
+                $(this).remove();
+            },
+            Click: function(value){
+                if(value){
+                    this.canvas.addEventListener("click", PlayerShoot);
+                    this.canvas.style.cursor = 'crosshair';
+                }
+                else{
+                    this.canvas.removeEventListener("click", PlayerShoot);               
+                    this.canvas.style.cursor = 'initial';                 
+                }
+            }
+        }        
+
+		window.onload = function(){ 
+            LoadImages();
+            CreateOptionsDiv();
+            CreateOptionsBox();
+            $("#start").click(StartGame);
+            $("#volume").click(ToggleVolume);
+            $("#ball").click(ToggleShootAnimation); 
+            DisableMoveEvent(true);
+            ToggleClickEvent(false);
+        }
+
+        function StartGame(){           //get level stats, create canvas, assign keydown, create and Draw board, creater player and enemies
+            //
+            ResetAllTimers();             
+
+            $("#rules").remove();
+
+            //get the game type and difficulty from the select tags
+            GetSelectOptions();
+
+            //get sizes, speeds and others
+            GetLevelStatistics();
+
+            //initialize assets (audio)
+            LoadMusic();  
+            
+            //create game canvas
+            gameArea.Start();
+
+            //create and draw the board
+            CreateBoard();
+
+            //Add score region, enemy count, bullets left and other stats
+            CreateStatsCanvas();
+
+            //Place the canvases in the div
+            PlaceCanvases();
+
+            //Play Background music
+            if(volumeOn)
+                backgroundMusic.play();
+
+            //create player and enemies
+            CreatePlayer();
+            PlayerTurn();      
+        }
+
+        function GetSelectOptions(){                    //assigns the values from the select boxes, changes the title and the button text
+            gameType = $("#typeChoice").val();
+            gameDifficulty = $("#difficultyChoice").val();
+            document.title = "Paintball Deathmatch: " + gameType + " " + gameDifficulty + " Difficulty";
+            startButton.innerHTML = "Start New Game";
+        }
+
+        function LoadImages(){                          //this will assign the sources of each image that will be used in the game
+            deathPic = document.createElement("img");
+            blueFireworks = document.createElement("img");          
+            redFireworks = document.createElement("img");           
+            violetFireworks = document.createElement("img");            
+            yellowFireworks = document.createElement("img");
+
+            //Assign the spritesheet sources
+            deathPic.src = dPSrc;
+            blueFireworks.src = fireworksSrc.blue;
+            redFireworks.src = fireworksSrc.red;
+            violetFireworks.src = fireworksSrc.violet;
+            yellowFireworks.src = fireworksSrc.yellow;
+        }
+
+        function LoadMusic(){                           //this will assign the sources for the music that is used in the game
+            deathSound = new Sound(dSSrc);              //assign the death sound source
+            if (backgroundMusic !== undefined){         //if the song is already assigned a value, reassign its source and start from the begining
+                backgroundMusic.sound.src = backgroundMusicSrc;
+                backgroundMusic.sound.currentTime = 0;
+            }
+            else
+                backgroundMusic = new Sound(backgroundMusicSrc, "");        //assign the source for the background music
+        }
+
+        function PlaceCanvases(){                       //this will place the canvases in the correct order in the main div
+            optionDiv.prepend(statsCanvas.canvas);
+            optionDiv.prepend(gameArea.canvas);
+        }
+
+        function Sound(src, controls = "none"){         //this will create an audio element, with attributes and methods
+            this.sound = document.createElement("audio");
+            this.sound.src = src;
+            this.sound.setAttribute("preload", "auto");
+            this.sound.setAttribute("controls", controls);
+            if(!volumeOn)
+                this.sound.volume = 0;
+
+            if(controls == "none")
+                this.sound.style.display = "none";
+            else
+                optionDiv.appendChild(document.createElement("br"));
+
+            optionDiv.appendChild(this.sound);
+            this.play = function(){
+                this.sound.play();
+            }
+            this.stop = function(){
+                this.sound.pause();
+            }
+            this.mute = function(){
+                this.sound.volume = 0;
+                this.stop();
+            } 
+            this.unmute = function(){
+                this.sound.volume = 1;
+            } 
+        }
+
+        function PlayerTurn(){                      //this will execute each command that is decided at the beginning of a new round
+            //Generate enemies on odd numbered turns
+            if(SpawnConditions())
+                GenerateEnemy(spawnRate);
+
+            if(currentRound % 2 == 1 && shootingEnemies){
+                pieces.forEach(ShootPlayer);
+
+                if(shootAnimation)
+                    SlideBalls(true);                               //slide animation for the enemy balls (true signals that it is for sliding enemy balls)
+            }
+
+            if(gameType != "Dodgeball"){ //reset number of shots remaining 
+                ballsLeft+= shotsPerTurn;
+                if(shootAnimation){
+                    if(currentRound % 2 == 0){                       //the update shots is only called after the enemies shoot
+                        UpdateShots();                              //this updates on rounds that they don't shoot
+                    }
+                }
+                else
+                    UpdateShots();
+            }
+            else{                                                   //remove the pieces that have been added to shoot at the player
+                if(!won)
+                    RoundBonusPoints();
+                RemovePieces();
+                StatsUpdate();
+            }
+
+            if(!shootingEnemies){
+                UpdateShots();
+            }
+
+            CheckWin();
+
+        	//allow arrow input while the player is not moving
+            if(!shootAnimation || currentRound % 2 == 0 || !shootingEnemies)
+                MovingAnimationActive(false);
+        }
+
+        function RedrawAll(){                                   //Redraw the board, the player, enemies and balls
+        	ReDrawBoard();
+            if(drawPlayer)
+        	   player.Draw();
+        	pieces.forEach(function draw(item){item.Draw();});
+        	balls.forEach(function draw(item){item.Draw();});            
+        }        
+
+        function StartRound() { //start the animation timer
+            tick = 0;
+            MovingAnimationActive(true);
+            gameTimer = setInterval(GameDraw, 1000/fps);
+        }
+        
+		function MovingAnimationActive(value){ //disable the keyboard input while moving
+            DisableMoveEvent(value);
+            moving = value;
+        }
+
+        function DisableMoveEvent(value){
+            if(value){                
+                document.onkeydown = null;
+                startButton.disabled = true;
+            }
+            else{
+                document.onkeydown = Move;
+                startButton.disabled = false;
+            }
+        }
+
+        function Move(e){ //takes in key input and assigns the next row/col position for the move function
+        	thekey = e.keyCode;
+            previousRow = player.row;
+            previousCol = player.col;
+            var nextRow;
+            var nextCol;
+            var moved;
+				
+			switch(thekey){
+                case key.w:
+				case key.up: {
+                        nextRow = previousRow - 1;
+                        nextCol = previousCol;
+                        moved = true;
+					break;
+				}
+                case key.s:
+				case key.down: {
+                        nextRow = previousRow + 1;
+                        nextCol = previousCol;
+                        moved = true;
+					break;
+				}
+                case key.a:
+				case key.left: {
+                        nextRow = previousRow;
+                        nextCol = previousCol - 1;
+                        moved = true;
+					break;
+				}
+                case key.d:
+				case key.right: {
+                        nextRow = previousRow;
+                        nextCol = previousCol + 1;
+                        moved = true;
+                    break;
+				}
+				default:
+					moved = false;
+					break;
+			}
+
+			//if the player has selected a valid space to move, set enemy movements and start the timer
+            if(moved && CheckSpace(previousRow, previousCol, nextRow, nextCol)){
+                if(gameType !=  "Dodgeball")        //let the enemy move if the game is not Dodgeball
+                    SetEnemyDirections();
+                else
+                    EnemyStay();
+
+            	StartRound();
+            }
+        }
+
+        function ResetAllTimers(){
+            StopTimer();
+            StopEnemyTimer();
+            StopPlayerTimer();
+            StopGrimClock();
+        }
+
+        function StopTimer(){
+            clearInterval(gameTimer);
+            gameTimer = undefined;
+        }
+
+        function CheckWin(){
+            if(!won && WinConditions()){                                                                         //win condition
+                $("#start").attr("disabled", "disabled");
+                player.Draw();
+                setTimeout(Win, 50);                                                                            //wait 1 second to announce win
+                won = true;
+            }
+        }
+
+        function Win(){
+            MovingAnimationActive(true);
+            ToggleClickEvent(false);
+            backgroundMusic.stop();
+            StopTimer();
+            WinScene();
+        }
+
+        function Lose(){
+            $("#start").attr("disabled", "disabled");
+            backgroundMusic.stop();
+            StopTimer();
+            DeathScene();
+        }
+	</script>
+</head>
+</html>

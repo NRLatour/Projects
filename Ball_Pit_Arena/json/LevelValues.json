@@ -1,0 +1,62 @@
+{                                                 //this is the offline version of the json object containing the game mode statistics
+    "Survival": {
+        "boardDimensions": 12, 
+        "fps": 76, 
+        "ballRadius": 4, 
+        "shotsPerTurn": 1,
+        "killPoints": 30,
+        "winBonus": 300,
+        "spawnRate": 2,
+        "shootingEnemies": true,
+        "totalNumberOfEnemies": 20,
+        "numberOfWaves": 1,
+        "goalText": "Defeat all enemies",
+        "roundBonus": 25,
+        "backgroundMusic": "./audio/Megalovania.mp3"
+    },
+    "Horde": {
+        "boardDimensions": 16, 
+        "fps": 76, 
+        "ballRadius": 3, 
+        "shotsPerTurn": 1,
+        "killPoints": 10,
+        "winBonus": 200,
+        "spawnRate": 8,
+        "shootingEnemies": false,
+        "totalNumberOfEnemies": 80,
+        "numberOfWaves": 5,
+        "goalText": "Survive until the end of wave 5",
+        "roundBonus": 10,
+        "backgroundMusic": "./audio/Megalovania.mp3"
+    },
+    "Test": {
+        "boardDimensions": 12, 
+        "fps": 76, 
+        "ballRadius": 2, 
+        "shotsPerTurn": 10,
+        "killPoints": 10,
+        "winBonus": 0,
+        "spawnRate": 1,
+        "shootingEnemies": true,
+        "totalNumberOfEnemies": 500,
+        "numberOfWaves": 5,
+        "goalText": "None",
+        "roundBonus": 0,
+        "backgroundMusic": "./audio/Megalovania.mp3"
+    },
+    "Dodgeball": {
+        "boardDimensions": 12, 
+        "fps": 76, 
+        "ballRadius": 5, 
+        "shotsPerTurn": 10,
+        "killPoints": 0,
+        "winBonus": 500,
+        "spawnRate": 4,
+        "shootingEnemies": true,
+        "totalNumberOfEnemies": 4,
+        "numberOfWaves": 5,
+        "goalText": "Survive until round 25",
+        "roundBonus": 40,
+        "backgroundMusic": "./audio/DangerZone.mp3"
+    }    
+}
