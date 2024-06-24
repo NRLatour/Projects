@@ -8,5 +8,6 @@ Genre: Bullet Hell
 Controls: 
  - Windows: Player moves with mouse while clicking.
  - Android: Player moves touch.
+
 Android APK and Windows Executable from June 16th currently available.
 
