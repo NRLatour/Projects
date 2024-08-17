@@ -16,9 +16,9 @@ Controls:
  - Android: Player moves touch.
 
 Android APK and Windows Executable from June 16th currently available.
-
-
-
+ 
+ 
+ 
 - RockPaperScissorAI. Made with Unity.
 
 Created as a weekend long Game Jam school assignment. 
