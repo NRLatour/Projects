@@ -1,5 +1,5 @@
 # Projects
-NEW ADDITION: 
+NEW ADDITION: <br />
 Project Name: Shapes and Sizes. Made with Unity.
 
 Created initially as a project with a friend until a small prototype was developed.
