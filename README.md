@@ -11,14 +11,12 @@ of edges that their shape has (square and triangle have 4 and 3 health).
 
 Genre: Bullet Hell
 
-Controls: 
- - Windows: Player moves with the mouse position while holding down the left mouse button.
- - Android: Player moves touch.
+Controls Per Platform: 
+Windows: Player moves with the mouse position while holding down the left mouse button.
+Android: Player moves touch.
 
 Android APK and Windows Executable from June 16th currently available.
- 
- 
- 
+<br /><br /><br />
 - RockPaperScissorAI. Made with Unity.
 
 Created as a weekend long Game Jam school assignment. 
