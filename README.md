@@ -1,6 +1,6 @@
 # Projects
 NEW ADDITION: 
-- Shapes and Sizes. Made with Unity.
+Project Name: Shapes and Sizes. Made with Unity.
 
 Created initially as a project with a friend until a small prototype was developed.
 
@@ -17,7 +17,7 @@ Android: Player moves touch.
 
 Android APK and Windows Executable from June 16th currently available.
 <br /><br /><br />
-- RockPaperScissorAI. Made with Unity.
+Project Name: RockPaperScissorAI. Made with Unity.
 
 Created as a weekend long Game Jam school assignment. 
 
